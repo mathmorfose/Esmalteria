@@ -68,42 +68,41 @@ class UIFunctions():
         #try to insert the date,
         #if 'error' get True means that already exist this date
         #if get False doesnt exist
-        error = BANCO_DADOS.insert(date,"date")
+        error = BANCO_DADOS.insert(date, "date")
         
         #Insert all store schedules
         if(error == False):
-            for i in range(START_TIME,END_TIME):
+            for i in range(START_TIME, END_TIME):
                 hr = str(i) + ":00"
                 if(len(str(i)) == 1):
                     hr = "0" + hr
                 
-                BANCO_DADOS.insert(hr,"schedule")
+                BANCO_DADOS.insert(hr, "schedule")
                 
-                id_horario = len(BANCO_DADOS.select("scheduled_id","schedule"))
-                BANCO_DADOS.insert_foreign_key(date,id_horario,"arrange")
+                id_horario = len(BANCO_DADOS.select("scheduled_id", "schedule"))
+                BANCO_DADOS.insert_foreign_key(date, id_horario, "arrange")
  
 class user:
     def add_new(self): 
         #create a list with each data from new user
-        new_user_data = [self.ui.input_nome_newuser.text(), 
-                         self.ui.input_tel_newuser.text(),
-                         self.ui.input_lograd_newuser.text(),
-                         self.ui.input_num_newuser.text(),
-                         self.ui.input_compl_newuser.text(),
-                         self.ui.input_cep_newuser.text()
-                        ]
+        new_user_data = [self.ui.newUser_input_name.text(),
+                         self.ui.newUser_input_phone.text(),
+                         self.ui.newUser_input_address.text(),
+                         self.ui.newUser_input_number.text(),
+                         self.ui.newUser_input_complement.text(),
+                         self.ui.newUser_input_cep.text()]
         
         #print(self.ui.input_nome_newuser.text())
         #insert it on database
         BANCO_DADOS.insert(new_user_data, "users")
         
         #clear all inputs for the next user
-        self.ui.input_nome_newuser.clear()
-        self.ui.input_tel_newuser.setText("(11) ")
-        self.ui.input_lograd_newuser.clear()
-        self.ui.input_num_newuser.clear()
-        self.ui.input_compl_newuser.clear()
-        self.ui.input_cep_newuser.clear()
+        self.ui.newUser_input_name.clear()
+        self.ui.newUser_input_phone.setText("(11) ")
+        self.ui.newUser_input_address.clear()
+        self.ui.newUser_input_number.clear()
+        self.ui.newUser_input_complement.clear()
+        self.ui.newUser_input_cep.clear()
 
     def edit(self):
         #get selected name
@@ -112,26 +111,26 @@ class user:
         #get id to update
         user_id = BANCO_DADOS.select("user_id", "users", None, "name = '" + name + "'")
         
-        BANCO_DADOS.update({"name": self.ui.input_nome_edit.text(),
-                            "phone": self.ui.input_tel_edit.text(),
-                            "address": self.ui.input_lograd_edit.text(),
-                            "address_number": self.ui.input_num_edit.text(),
-                            "address_complement": self.ui.input_compl_edit.text(),
-                            "cep": self.ui.input_cep_edit.text()},
+        BANCO_DADOS.update({"name": self.ui.editUser_input_name.text(),
+                            "phone": self.ui.editUser_input_phone.text(),
+                            "address": self.ui.editUser_input_address.text(),
+                            "address_number": self.ui.editUser_input_number.text(),
+                            "address_complement": self.ui.editUser_input_complement.text(),
+                            "cep": self.ui.editUser_input_cep.text()},
                             "users", "user_id = " + str(user_id[0]["user_id"]))
 
     def fill_edit_inputs(self):
         #get selected user to edit
-        user_name = self.ui.caixa_nomes_edit.currentText()
+        user_name = self.ui.editUser_nameBox.currentText()
 
         if(user_name != ''): 
             dados = BANCO_DADOS.select("*", "users", None, "name = '" + user_name + "'")
-            self.ui.input_nome_edit.setText(dados[0]["name"])
-            self.ui.input_tel_edit.setText(dados[0]["phone"])
-            self.ui.input_lograd_edit.setText(dados[0]["address"])
-            self.ui.input_num_edit.setText(dados[0]["address_number"])
-            self.ui.input_compl_edit.setText(dados[0]["address_complement"])
-            self.ui.input_cep_edit.setText(dados[0]["cep"])
+            self.ui.editUser_input_name.setText(dados[0]["name"])
+            self.ui.editUser_input_phone.setText(dados[0]["phone"])
+            self.ui.editUser_input_address.setText(dados[0]["address"])
+            self.ui.editUser_input_number.setText(dados[0]["address_number"])
+            self.ui.editUser_input_complement.setText(dados[0]["address_complement"])
+            self.ui.editUser_input_cep.setText(dados[0]["cep"])
 
     def delete(box_names):
         #get selected name
@@ -139,30 +138,30 @@ class user:
 
         #get id to delete
         id = BANCO_DADOS.select("user_id", "users", None, "name = '" + name + "'")
-        BANCO_DADOS.delete("users","user_id = " + str(id[0]["user_id"]))
+        BANCO_DADOS.delete("users", "user_id = " + str(id[0]["user_id"]))
 
 class stock:
 
     def show_items(stock_items):
         stock_items.clear()
         #global listinha #??
-        items_data = BANCO_DADOS.select("*","stock","name")
+        items_data = BANCO_DADOS.select("*", "stock", "name")
         list = []
         
-        for i in range(0,len(items_data)):  
+        for i in range(0, len(items_data)):
             #add each item name and quantity to a list
-            list.append(items_data[i]["name"]+ " (" + str(items_data[i]["amount"]) + ")")
+            list.append(items_data[i]["name"] + " (" + str(items_data[i]["amount"]) + ")")
         
         stock_items.addItems(list)
 
     def add_new_item(self):
-        new_data = [self.ui.input_nomeItem_additem.text(), self.ui.input_qntdinicial_additem.text()]
+        new_data = [self.ui.stock_new_input_name.text(), self.ui.stock_new_input_update.text()]
         BANCO_DADOS.insert(new_data, "stock")
-        stock.show_items(self.ui.lista_estoque)
+        stock.show_items(self.ui.stock_list)
 
         #clear inputs for the next time
-        self.ui.input_nomeItem_additem.clear()
-        self.ui.input_qntdinicial_additem.clear()
+        self.ui.stock_new_input_name.clear()
+        self.ui.stock_new_input_update.clear()
 
     def modify_item_quantity(ui_items_box):
         ui_items_box.clear()
@@ -186,20 +185,20 @@ class stock:
     
     def update_item_quantity(self):
         #get selected item    
-        item = self.ui.caixa_itens_altqntd.currentText()
+        item = self.ui.stock_update_box_items.currentText()
 
         item_name = item.split(" (")
         current_quantity = item_name[1].split(")")
 
         #quantity received by the user
-        new_quantity = int(self.ui.input_altqntd.text())
+        new_quantity = int(self.ui.stock_update_input.text())
 
         #if add button is selected
-        if(self.ui.rBtn_add_altqntd.isChecked()): 
+        if(self.ui.stock_update_rbtn_add.isChecked()):
             total_quantity = int(current_quantity[0]) + new_quantity
 
         #if remove button is selected    
-        if(self.ui.rBtn_ret_altqntd.isChecked()):
+        if(self.ui.stock_update_rbtn_remove.isChecked()):
             total_quantity = int(current_quantity[0]) - new_quantity
             
             if total_quantity < 0:
@@ -210,9 +209,9 @@ class stock:
         BANCO_DADOS.update({"amount":str(total_quantity)}, "stock", "item_id = " + str(ids[0]["item_id"]))
 
         #show updated items
-        stock.show_items(self.ui.lista_estoque)
+        stock.show_items(self.ui.stock_list)
 
-        self.ui.input_altqntd.clear()
+        self.ui.stock_update_input.clear()
 
 class toSchedule:
 
@@ -233,15 +232,15 @@ class toSchedule:
 
     def show_date(self):
         
-        formated_date = UIFunctions.format_date_toDatabase(self.ui.calendario_agendar)
+        formated_date = UIFunctions.format_date_toDatabase(self.ui.toSchedule_calendar)
         
         UIFunctions.add_schedules_toDatabase(formated_date)
-        UIFunctions.fill_schedule_box(self.ui.caixa_agendar_horarios, formated_date)
+        UIFunctions.fill_schedule_box(self.ui.toSchedule_box_schedules, formated_date)
 
         date = toSchedule.ddmmyyyy_date(formated_date)
 
         #self.ui.label_agendar
-        self.ui.label_dataselect.setText("Horários para o dia: " + date)
+        self.ui.toSchedule_label_date.setText("Horários para o dia: " + date)
     
     #format string to arrange the appointment
     #Ex: 08:00 (Vick: M, P)
@@ -250,13 +249,13 @@ class toSchedule:
         arrange += user_name + ": "
         
         #add the service to the arrange
-        if(self.ui.checkBox_mao.isChecked()):
+        if(self.ui.toSchedule_checkBox_hand.isChecked()):
             arrange += "M, "
-        if(self.ui.checkBox_pe.isChecked()):
+        if(self.ui.toSchedule_checkBox_feet.isChecked()):
             arrange += "P, "
-        if(self.ui.checkBox_cabelo.isChecked()):
+        if(self.ui.toSchedule_checkBox_hair.isChecked()):
             arrange += "C, "
-        if(self.ui.checkBox_unhagel.isChecked()):
+        if(self.ui.toSchedule_checkBox_nailgel.isChecked()):
             arrange += "UG, "
 
         #replace last , with )
@@ -268,22 +267,22 @@ class toSchedule:
         return arrange
 
     def uncheck_services(self):
-        if(self.ui.checkBox_mao.isChecked()):
-            self.ui.checkBox_mao.setChecked(False)
+        if(self.ui.toSchedule_checkBox_hand.isChecked()):
+            self.ui.toSchedule_checkBox_hand.setChecked(False)
 
-        if(self.ui.checkBox_pe.isChecked()):
-            self.ui.checkBox_pe.setChecked(False)
+        if(self.ui.toSchedule_checkBox_feet.isChecked()):
+            self.ui.toSchedule_checkBox_feet.setChecked(False)
 
-        if(self.ui.checkBox_cabelo.isChecked()):
-            self.ui.checkBox_cabelo.setChecked(False)
+        if(self.ui.toSchedule_checkBox_hair.isChecked()):
+            self.ui.toSchedule_checkBox_hair.setChecked(False)
 
-        if(self.ui.checkBox_unhagel.isChecked()):
-            self.ui.checkBox_unhagel.setChecked(False)
+        if(self.ui.toSchedule_checkBox_nailgel.isChecked()):
+            self.ui.toSchedule_checkBox_nailgel.setChecked(False)
 
     def update_schedule(self):
         
         #get selected hour and format it
-        aux = self.ui.caixa_agendar_horarios.currentText()
+        aux = self.ui.toSchedule_box_schedules.currentText()
         hour_selected = aux.split(':')
         if(len(hour_selected[0]) == 1):
             hour_selected = "0" + hour_selected[0]
@@ -291,21 +290,21 @@ class toSchedule:
             hour_selected = hour_selected[0]
 
         #get selected date
-        date = UIFunctions.format_date_toDatabase(self.ui.calendario_agendar)
+        date = UIFunctions.format_date_toDatabase(self.ui.toSchedule_calendar)
         
         #get the first id from date
-        first_id = BANCO_DADOS.select("scheduled_id","arrange",None, "date_id = '" + date + "' LIMIT 1")
+        first_id = BANCO_DADOS.select("scheduled_id", "arrange", None, "date_id = '" + date + "' LIMIT 1")
 
         #equation to get hour id to update
         hour_id = first_id[0]["scheduled_id"] + int(hour_selected) - START_TIME
         
         #get user name selected
-        user_name = self.ui.caixa_agendar_nomes.currentText()
+        user_name = self.ui.toSchedule_box_users.currentText()
 
         #get the arrangement with hour and service(s)
-        arrange = toSchedule.arrange_theAppointment(hour_selected,user_name,self)
+        arrange = toSchedule.arrange_theAppointment(hour_selected, user_name, self)
 
-        BANCO_DADOS.update({"scheduled":arrange},"schedule", "scheduled_id = '" + str(hour_id) + "'")
+        BANCO_DADOS.update({"scheduled":arrange}, "schedule", "scheduled_id = '" + str(hour_id) + "'")
 
-        UIFunctions.fill_schedule_box(self.ui.caixa_agendar_horarios,date)
+        UIFunctions.fill_schedule_box(self.ui.toSchedule_box_schedules, date)
         toSchedule.uncheck_services(self)
