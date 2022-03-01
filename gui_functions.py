@@ -25,9 +25,9 @@ class UIFunctions():
             self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
             self.animation.start()
     
-    def add_item_toBox(box,i,item):
+    def add_item_toBox(box, i, item):
         box.addItem("") #add lugar pro item 
-        box.setItemText(i,item)
+        box.setItemText(i, item)
 
     def fill_clientBoxes(box):
         #clear the box previously filled
